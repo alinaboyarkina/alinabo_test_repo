@@ -9,7 +9,7 @@ test ('Validate login successful', async ({page}) => {
     
     await expect (page).toHaveURL('https://practicesoftwaretesting.com/account');
     
-    await page.waitForLoadState('networkidle');
+    await page.waitForSelector('[data-test="page-title"]', { timeout: 20000 });
     
     await expect(page).toHaveTitle('Overview - Practice Software Testing - Toolshop - v5.0');
     
