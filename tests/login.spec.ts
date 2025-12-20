@@ -9,7 +9,7 @@ test ('Validate login successful', async ({page}) => {
     
     await expect (page).toHaveURL('https://practicesoftwaretesting.com/account');
     
-    await page.waitForSelector('h1:has-text("My account")');
+    await page.waitForLoadState('networkidle');
     
     await expect(page).toHaveTitle('Overview - Practice Software Testing - Toolshop - v5.0');
     
