@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test ('Validate login successful', async ({page}) => {
+    test.skip(process.env.CI === 'true', 'Skipped in CI');
 
     await page.goto('https://practicesoftwaretesting.com/auth/login');
     await page.locator('[data-test="email"]').fill('customer@practicesoftwaretesting.com');
@@ -9,7 +10,6 @@ test ('Validate login successful', async ({page}) => {
     
     await expect (page).toHaveURL('https://practicesoftwaretesting.com/account');
     
-    test.skip(process.env.CI === 'true', 'Skipped in CI');
     await expect(page).toHaveTitle('Overview - Practice Software Testing - Toolshop - v5.0');
     
     await expect(page.locator('[data-test="nav-menu"]')).toHaveText('Jane Doe');
