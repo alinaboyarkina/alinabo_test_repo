@@ -1,0 +1,22 @@
+{
+  "name": "alinabo_test_repo",
+  "version": "1.0.0",
+  "description": "My first test repository",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alinaboyarkina/alinabo_test_repo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alinaboyarkina/alinabo_test_repo/issues"
+  },
+  "homepage": "https://github.com/alinaboyarkina/alinabo_test_repo#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.3"
+  }
+}
