@@ -1,19 +1,19 @@
 import { Locator, Page } from "@playwright/test";
-import { HeaderFragmentOut } from '../fragments/header-out';
+import { HeaderFragment } from '../fragments/header';
 
 export class LoginPage {
 
     page: Page;
-    header: HeaderFragmentOut;
+    header: HeaderFragment;
     emailField: Locator;
     passwordField: Locator;
     loginButton: Locator;
     constructor (page: Page) {
         this.page = page;
-        this.header = new HeaderFragmentOut(page);
-        this.emailField = this.page.locator('[data-test="email"]');
-        this.passwordField = this.page.locator('[data-test="password"]');
-        this.loginButton = this.page.locator('[data-test="login-submit"]');
+        this.header = new HeaderFragment(page);
+        this.emailField = this.page.getByTestId('email');
+        this.passwordField = this.page.getByTestId('password');
+        this.loginButton = this.page.getByTestId('login-submit');
     }
     
     async performLogin (email: string, password: string) {
