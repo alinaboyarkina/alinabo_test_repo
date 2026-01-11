@@ -4,7 +4,6 @@ import { ProductPage } from '../pages/product.page';
 import { CheckoutPage } from '../pages/checkout.page';
 
 test ('Verify user can add product to cart', async ({page}) => {
-    test.skip(process.env.CI === 'true', 'Skipped in CI');
      
     const homePage = new HomePage(page);
     const productPage = new ProductPage(page);
