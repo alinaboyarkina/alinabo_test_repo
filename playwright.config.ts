@@ -37,20 +37,26 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
+        // Setup project
+    { name: 'perform-login', testMatch: /auth-setup\.spec\.ts/ },
+    
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { 
+       storageState: 'playwright/.auth/user.json',
+        ...devices['Desktop Chrome'] },
+        dependencies: ['perform-login'],
     },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
+    //{
+    //  name: 'firefox',
+    //  use: { ...devices['Desktop Firefox'] },
+    //},
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+    //{
+    //  name: 'webkit',
+    //  use: { ...devices['Desktop Safari'] },
+    //},
 
     /* Test against mobile viewports. */
     // {
