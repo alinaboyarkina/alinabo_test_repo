@@ -18,8 +18,6 @@ test('Verify filter by category: Sander', async ({ page }) => {
 
   const productNames = await homePage.productNameField.allTextContents();
 
-  console.log('Products after filtering:', productNames);
-
   for (const name of productNames) {
     expect(name).toContain(Category.Sander);
   }

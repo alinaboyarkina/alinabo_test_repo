@@ -11,7 +11,6 @@ test ('Validate login successful', async ({page}) => {
 
     await page.goto('/auth/login');
     await loginPage.performLogin('customer@practicesoftwaretesting.com', 'welcome01');
-    //await loginPage.performLogin('ualesya2022@gmail.com', 'uO6$fmG3+q');
     await expect(page).toHaveURL('/account');
     await page.close();
     await page.context().storageState({ path: authFile });

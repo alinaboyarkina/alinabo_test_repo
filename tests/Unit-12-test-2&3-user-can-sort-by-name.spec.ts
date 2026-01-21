@@ -1,102 +1,61 @@
-import { test, expect} from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { HomePage } from '../pages/home.page';
 import { Product } from '../fragments/productCard';
 
 test.describe('Verify user can perform sorting by name (asc & desc)', () => {
-  
   let allProducts: Product[] = [];
   let expectedProducts: {
     byNameAsc: Product[];
     byNameDesc: Product[];
   };
   
+  const sortingCases = [
+    {
+      sortValue: 'name,asc',
+      expectedKey: 'byNameAsc' as const,
+    },
+    {
+      sortValue: 'name,desc',
+      expectedKey: 'byNameDesc' as const,
+    },
+  ];
+
   test.beforeAll(async ({ browser }) => {
-   const page = await browser.newPage();
-   const homePage = new HomePage(page);
+    const page = await browser.newPage();
+    const homePage = new HomePage(page);
  
-   await page.goto('/');
-   allProducts = await homePage.getAllProducts();
+    await page.goto('/');
+    allProducts = await homePage.getAllProducts();
 
     expectedProducts = {
-        byNameAsc: [...allProducts]
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .slice(0, 9),
+      byNameAsc: [...allProducts]
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .slice(0, 9),
 
-        byNameDesc: [...allProducts]
-        .sort((a, b) => b.name.localeCompare(a.name))
-        .slice(0, 9),
+      byNameDesc: [...allProducts]
+      .sort((a, b) => b.name.localeCompare(a.name))
+      .slice(0, 9),
     };
-  
+    await page.close();
   });
   
-  test.describe('Verify user can perform sorting by name (asc & desc)', () => {
-
-    test('Name ASC sorting works', async ({ page }) => {
+  for (const { sortValue, expectedKey } of sortingCases) {
+    test( `Verify sorting by ${sortValue}`, async ({ page }) => {
       const homePage = new HomePage(page);
-
-      await page.goto('/');
-
-      const firstNameBefore =
-      await homePage.productNameField.first().textContent();
-
-      await Promise.all([
-        page.waitForResponse(resp =>
-        resp.url().includes('/products') && resp.status() === 200
-      ),
-        homePage.selectSort('name,asc'),
-    ]);
-
-      await expect.poll(async () =>
-      homePage.productNameField.first().textContent()
-  )
-  .not.toBe(firstNameBefore);
-
-      const names = await homePage.productNameField.allTextContents();
-      const prices = await homePage.productPriceField.allTextContents();
-
-      const uiProducts = names.map((name, i) => ({
-        name: name.trim(),
-        price: Number(prices[i].replace('$', '').trim()),
-      }));
-
-      console.log('UI NAME ASC:', uiProducts);
-
-      expect(uiProducts).toEqual(expectedProducts.byNameAsc);
-
-    });
-    
-    test('Name DESC sorting works', async ({ page }) => {
-      const homePage = new HomePage(page);
-
       await page.goto('/');
       
-      const firstNameBefore =
-      await homePage.productNameField.first().textContent();
-      
-      await Promise.all([
-        page.waitForResponse(resp =>
-        resp.url().includes('/products') && resp.status() === 200
-      ),
-      homePage.selectSort('name,desc'),
-    ]);
-    
-    await expect.poll(async () =>
-        homePage.productNameField.first().textContent()
-  )
-  .not.toBe(firstNameBefore);
+      // 1. Сортуємо (метод сам дочекається і мережі, і оновлення тексту)
+      await homePage.selectSort(sortValue);
 
-      const names = await homePage.productNameField.allTextContents();
-      const prices = await homePage.productPriceField.allTextContents();
+      // 2. Тепер збираємо дані. Використовуйте версію з evaluate, 
+      // щоб уникнути помилок з nth(1)
+      const uiProductsRaw = await homePage.getFirstPageProducts(); 
+      const uiProducts = uiProductsRaw.slice(0, 9);
 
-      const uiProducts = names.map((name, i) => ({
-        name: name.trim(),
-        price: Number(prices[i].replace('$', '').trim()),
-      }));
-
-      expect(uiProducts).toEqual(expectedProducts.byNameDesc);
+      expect(uiProducts).toEqual(expectedProducts[expectedKey]);
     });
-
-  });
-  
+  }
 });
+
+
 

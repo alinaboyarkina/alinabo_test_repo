@@ -1,10 +1,7 @@
-import { Locator, Page } from "@playwright/test";
+import { Locator, Page, expect } from "@playwright/test";
 import { HeaderFragment } from '../fragments/header';
+import { Product } from "../fragments/productCard";
 
-export type Product = {
-  name: string;
-  price: number;
-};
 export class HomePage {
   page: Page;
   header: HeaderFragment;
@@ -35,71 +32,106 @@ export class HomePage {
     await this.searchSubmitButton.click();
   }
   
-  productByName = (name: string) => this.page.getByTestId('search_completed').getByTestId(/^product-/).filter({ hasText: name }).first();
+  productByName (name: string) {
+    return this.page.getByTestId('search_completed').getByTestId(/^product-/).filter({ hasText: name }).first()};
 
   categoryByName(name: string):Locator {
     return this.page
     .locator('label', { hasText: name })
     .locator('input[type="checkbox"]');
   }
-  
+
   async getAllProducts(): Promise<Product[]> {
-    const productMap = new Map<string, Product>();
-      
-    // чекаємо перший рендер
-    await this.productNameField.first().waitFor({ state: 'visible' });
+    const products: Product[] = [];
+    let hasNextPage = true;
 
-    let prevFirstProduct = '';
+    do {
+      const allProductCards = this.page.locator("[data-test^='product-']");
+      await allProductCards.first().waitFor({ state: 'visible' });
 
-    while (true) {
-      // чекаємо, що контент оновився
-      const firstProduct = await this.productNameField.first().textContent();
+      const cards = await allProductCards.all();
+      for (const card of cards) {
+        const nameLocator = card.getByTestId("product-name");
+        
+        if (await nameLocator.count() > 0) {
+          const name = (await nameLocator.textContent())?.trim() ?? '';
+          const priceRaw = (await card.getByTestId("product-price").textContent())?.trim() ?? '';
 
-      if (firstProduct === prevFirstProduct) {
-        await this.page.waitForTimeout(100);
-        continue;
+          products.push({
+            name,
+            price: priceRaw ? Number(priceRaw.replace(/[^0-9.]/g, '')) : null
+          });
+        }
       }
 
-      prevFirstProduct = firstProduct ?? '';
-
-      // збір поточної сторінки
-      const names = await this.productNameField.allTextContents();
-      const prices = await this.productPriceField.allTextContents();
-
-      for (let i = 0; i < names.length; i++) {
-        const product: Product = {
-          name: names[i].trim(),
-          price: Number(prices[i].replace('$', '').trim()),
-        };
-
-        const key = `${product.name}-${product.price}`;
-        productMap.set(key, product); 
-      }
-
-      // перевірка останньої сторінки
       const isLastPage = await this.nextPageItem.evaluate(el =>
         el.classList.contains('disabled')
       );
 
-      if (isLastPage) break;
-      
-      await this.nextPageButton.click();
-    }
-    return [...productMap.values()];
-  };
-  async selectSort(value: string) {
-    await this.sortDropdown.selectOption(value);
-    
-    // чекаємо, що список реально оновився 
-    await this.productNameField.first().waitFor({ state: 'visible' });
+      if (!isLastPage) {
+        const responsePromise = this.page.waitForResponse(resp =>
+          resp.url().includes('/products') && resp.status() === 200,
+          { timeout: 10000 }
+        );
+
+        const firstProductNameBeforeClick = products[products.length - cards.length]?.name;
+
+        await this.nextPageButton.click();
+        await responsePromise;
+
+        await this.page.waitForFunction(
+          (oldName) => {
+            const firstProduct = document.querySelector("[data-test='product-name']");
+            return firstProduct && firstProduct.textContent?.trim() !== oldName;
+          },
+          firstProductNameBeforeClick,
+          { timeout: 5000 }
+        )
+      } else {
+        hasNextPage = false;
+      }
+    } while (hasNextPage);
+    return products;
   }
-};
- 
 
+  async getFirstPageProducts(): Promise<Product[]> {
+    const allProductCards = this.page.locator("[data-test^='product-']");
+    await allProductCards.first().waitFor({ state: 'visible' });
 
+    const cards = await allProductCards.all();
+    const productData: Product[] = [];
 
+    for (const card of cards) {
+      const nameField = card.getByTestId("product-name");
 
+      if (await nameField.count() > 0) {
+        const name = (await nameField.textContent())?.trim() ?? '';
+        const priceRaw = (await card.getByTestId("product-price").textContent())?.trim() ?? '';
+        
+        productData.push({
+          name,
+          price: priceRaw ? Number(priceRaw.replace(/[^0-9.]/g, '')) : null
+        });
+      }
+    }
+    return productData;
+  }
+  
+  async selectSort(value: string) {
+    const oldFirstName = (await this.productNameField.first().textContent())?.trim() ?? '';
 
+    await Promise.all([
+      this.page.waitForResponse(resp =>
+        resp.url().includes('/products') && resp.status() === 200,
+        { timeout: 10000 }
+      ),
+      this.sortDropdown.selectOption(value)
+    ]);
 
-
-
+    await expect.poll(async () => {
+      return (await this.productNameField.first().textContent())?.trim();
+    }, {
+      timeout: 7000,
+    }).not.toBe(oldFirstName);
+ }
+}
