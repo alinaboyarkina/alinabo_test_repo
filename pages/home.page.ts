@@ -43,7 +43,7 @@ export class HomePage {
 
   async getAllProducts(): Promise<Product[]> {
     const products: Product[] = [];
-    let hasNextPage = true;
+    let isLastPage: boolean;
 
     do {
       const allProductCards = this.page.locator("[data-test^='product-']");
@@ -51,11 +51,11 @@ export class HomePage {
 
       const cards = await allProductCards.all();
       for (const card of cards) {
-        const nameLocator = card.getByTestId("product-name");
-        
+        const nameLocator = card.locator(this.productNameField);
+
         if (await nameLocator.count() > 0) {
           const name = (await nameLocator.textContent())?.trim() ?? '';
-          const priceRaw = (await card.getByTestId("product-price").textContent())?.trim() ?? '';
+          const priceRaw = (await card.locator(this.productPriceField).textContent())?.trim() ?? '';
 
           products.push({
             name,
@@ -64,17 +64,17 @@ export class HomePage {
         }
       }
 
-      const isLastPage = await this.nextPageItem.evaluate(el =>
+      isLastPage = await this.nextPageItem.evaluate(el => 
         el.classList.contains('disabled')
       );
 
       if (!isLastPage) {
-        const responsePromise = this.page.waitForResponse(resp =>
-          resp.url().includes('/products') && resp.status() === 200,
+        const firstProductNameBeforeClick = (await this.productNameField.first().textContent())?.trim();
+
+        const responsePromise = this.page.waitForResponse(
+          resp => resp.url().includes('/products') && resp.status() === 200,
           { timeout: 10000 }
         );
-
-        const firstProductNameBeforeClick = products[products.length - cards.length]?.name;
 
         await this.nextPageButton.click();
         await responsePromise;
@@ -87,10 +87,8 @@ export class HomePage {
           firstProductNameBeforeClick,
           { timeout: 5000 }
         )
-      } else {
-        hasNextPage = false;
       }
-    } while (hasNextPage);
+    } while (!isLastPage); 
     return products;
   }
 
