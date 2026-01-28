@@ -27,6 +27,26 @@ export class HomePage {
     this.nextPageItem = this.page.locator('li.page-item', { has: this.nextPageButton });
   }
   
+  async open() { 
+        await this.page.goto('/'); 
+    }
+  
+  get firstProductCard() {
+    return this.page.locator("[data-test^='product-']").first();
+  }
+
+  async getFirstProduct(): Promise<Product> {
+    const card = this.firstProductCard;
+
+    const name = (await card.getByTestId("product-name").textContent())?.trim() ?? '';
+    const priceRaw = (await card.getByTestId("product-price").textContent())?.trim() ?? '';
+
+    return {
+      name,
+      price: priceRaw ? Number(priceRaw.replace(/[^0-9.]/g, '')) : null
+    };
+  }
+
   async searchProduct(productName: string) {
     await this.searchField.fill(productName);
     await this.searchSubmitButton.click();

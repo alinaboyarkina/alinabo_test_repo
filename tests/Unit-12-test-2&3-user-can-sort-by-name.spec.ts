@@ -44,11 +44,8 @@ test.describe('Verify user can perform sorting by name (asc & desc)', () => {
       const homePage = new HomePage(page);
       await page.goto('/');
       
-      // 1. Сортуємо (метод сам дочекається і мережі, і оновлення тексту)
       await homePage.selectSort(sortValue);
 
-      // 2. Тепер збираємо дані. Використовуйте версію з evaluate, 
-      // щоб уникнути помилок з nth(1)
       const uiProductsRaw = await homePage.getFirstPageProducts(); 
       const uiProducts = uiProductsRaw.slice(0, 9);
 

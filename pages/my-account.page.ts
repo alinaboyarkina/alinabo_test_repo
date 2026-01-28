@@ -18,4 +18,8 @@ export class MyAccount {
         this.invoicesButton = this.page.getByTestId('nav-invoices');
         this.messagesButton = this.page.getByTestId('nav-messages');
     }
+
+    async open() { 
+        await this.page.goto('/account'); 
+    }
 }

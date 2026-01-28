@@ -1,6 +1,5 @@
 import { Locator, Page } from "@playwright/test";
 import { HeaderFragment } from '../fragments/header';
-
 export class LoginPage {
 
     page: Page;
@@ -17,8 +16,13 @@ export class LoginPage {
     }
     
     async performLogin (email: string, password: string) {
+        await this.page.goto('/auth/login');
         await this.emailField.fill(email);
         await this.passwordField.fill(password);
         await this.loginButton.click();
+    }
+
+    async open() { 
+        await this.page.goto('/login'); 
     }
 }
