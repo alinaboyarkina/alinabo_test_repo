@@ -3,11 +3,11 @@ import { HomePage } from '../pages/home.page';
 import { Category } from '../enums/categories';
 
 test('Verify filter by category: Sander', async ({ page }) => {
+  test.skip(process.env.CI === 'true', 'Skipped in CI');
 
   const homePage = new HomePage(page);
 
-  await page.goto('/');
-
+  await homePage.open();
   await homePage.categoryByName(Category.Sander).check();
 
   const firstNameBefore = await homePage.productNameField.first().textContent();

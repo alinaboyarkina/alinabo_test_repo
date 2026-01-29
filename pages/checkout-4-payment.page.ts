@@ -1,6 +1,6 @@
 import { Locator, Page } from "@playwright/test";
 import { HeaderFragment } from '../fragments/header';
-
+import { CreditCardData } from "../types/creditCard";
 export class CheckoutPaymentPage {
 
     page: Page;
@@ -29,4 +29,13 @@ export class CheckoutPaymentPage {
         this.proceedCheckoutButton = this.page.getByTestId('proceed-4');
         
     }
+    
+    async payWithCreditCard(card: CreditCardData) {
+        await this.paymentMethodSelector.selectOption('credit-card');
+        await this.creditCardNumberField.fill(card.cardNumber);
+        await this.expirationDateField.fill(card.expiration);
+        await this.cvvField.fill(card.cvv);
+        await this.cardHolerNameField.fill(card.holder);
+        await this.confirmButton.click();
+        }
 }

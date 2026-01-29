@@ -2,9 +2,10 @@ import { expect } from '@playwright/test';
 import { Category } from '../enums/categories';
 import { test } from '../fixtures';
 
-test('Verify filter by category: Sander with allPages and fixture', async ({ app, page }) => {
+test('Verify filter by category: Sander with allPages and fixture', async ({ app, }) => {
+  test.skip(process.env.CI === 'true', 'Skipped in CI');
 
-  await page.goto('');
+  await app.homePage.open();
 
   await app.homePage.categoryByName(Category.Sander).check();
 

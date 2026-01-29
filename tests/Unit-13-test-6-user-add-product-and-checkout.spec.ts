@@ -1,7 +1,10 @@
 import { expect } from '@playwright/test'
 import { test } from '../fixtures';
+import { TEST_USER } from '../testData/testUser';
+import { VALID_CREDIT_CARD } from "../testData/testCreditCards";
 
-test ('Verify user can add product and can checkout with allPages and fixture', async ({loggedInApp,page}) => {
+
+test ('Verify user can add product and can checkout with allPages and fixture', async ({loggedInApp}) => {
     test.skip(process.env.CI === 'true', 'Skipped in CI');
 
     await loggedInApp.homePage.open();
@@ -21,26 +24,17 @@ test ('Verify user can add product and can checkout with allPages and fixture', 
     await loggedInApp.checkoutCartPage.proceedCheckoutButton.click();
 
     //Перевірити, що юзер вже залогінений і нічого додатково робити не потрібно
-    await expect(loggedInApp.checkoutSignInPage.header.navMenuButton).toHaveText('Jane Doe');
+    await expect(loggedInApp.checkoutSignInPage.header.navMenuButton).toHaveText(TEST_USER.fullName);
     await loggedInApp.checkoutSignInPage.proceedCheckoutButton.click();
-    //await expect(loggedInApp.checkoutBillingAddressPage.billingAddressForm).toBeVisible();
 
     //Ввести відсутні поля на сторінці Billing Address
     await loggedInApp.checkoutBillingAddressPage.stateInBillingAddressFormField.fill('Anystate');
     await loggedInApp.checkoutBillingAddressPage.postcodeInBillingAddressFormField.fill('1010');
     await loggedInApp.checkoutBillingAddressPage.proceedCheckoutButton.click();
 
-    //На наступній сторінці обрати:
-    // Credit Card -> Card number: 1111-1111-1111-1111
-    // Expiration Date: +3 місяці до дати запуску тесту
-    // CVV: 111
-    // Card Holder Name: any name
-    // Confirm
+    //На наступній заповнити тестові данні
     await loggedInApp.checkoutPaymentPage.paymentMethodSelector.selectOption('credit-card');
-    await loggedInApp.checkoutPaymentPage.creditCardNumberField.fill('1111-1111-1111-1111');
-    await loggedInApp.checkoutPaymentPage.expirationDateField.fill('04/2026');
-    await loggedInApp.checkoutPaymentPage.cvvField.fill('111');
-    await loggedInApp.checkoutPaymentPage.cardHolerNameField.fill('any name');
+    await loggedInApp.checkoutPaymentPage.payWithCreditCard(VALID_CREDIT_CARD);
     await loggedInApp.checkoutPaymentPage.confirmButton.click();
 
     //Перевірити, що платіж був успішним.

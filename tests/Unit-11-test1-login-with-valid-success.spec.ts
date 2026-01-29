@@ -8,7 +8,6 @@ test ('Validate login successful', async ({page}) => {
     const loginPage = new LoginPage (page);
     const homePage = new HomePage (page);
 
-    await page.goto('/auth/login');
     await loginPage.performLogin('customer@practicesoftwaretesting.com', 'welcome01');
     
     await expect(page).toHaveURL('/account');

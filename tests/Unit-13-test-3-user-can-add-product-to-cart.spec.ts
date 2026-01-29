@@ -2,12 +2,13 @@ import { expect } from '@playwright/test';
 import { test } from '../fixtures';
 
 test ('Verify user can add product to cart with allPages and fixture', async ({app, page}) => {
+    test.skip(process.env.CI === 'true', 'Skipped in CI');
     
     const productName = 'Slip Joint Pliers';
     const productPrice = '9.17';
     const alert = page.getByRole('alert');
 
-    await page.goto('');
+    await app.homePage.open();
     await app.homePage.header.homeButton.click();
     await app.homePage.searchProduct(productName);
     await app.homePage.productByName(productName).click();

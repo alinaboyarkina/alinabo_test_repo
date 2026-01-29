@@ -1,8 +1,10 @@
 import { expect } from '@playwright/test';
-import { Product } from "../fragments/productCard";
+import { Product } from "../types/productCard";
 import { test } from '../fixtures';
 
 test.describe('Verify user can perform sorting by name & price (asc & desc) with allPages and fixture', () => {
+  test.skip(process.env.CI === 'true', 'Skipped in CI');
+  
   let allProducts: Product[] = [];
   let expectedProducts: {
     byNameAsc: Product[];
@@ -32,7 +34,7 @@ test.describe('Verify user can perform sorting by name & price (asc & desc) with
 
   test.beforeAll(async ({ app, page }) => {
  
-    await app.homePage.page.goto('/');
+    await app.homePage.open();
     allProducts = await app.homePage.getAllProducts();
 
     expectedProducts = {

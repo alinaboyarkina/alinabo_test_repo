@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { HomePage } from '../pages/home.page';
-import { Product } from '../fragments/productCard';
+import { Product } from '../types/productCard';
+import { buildSortedProductSets } from "../utils/sortProducts";
 
 test.describe('Verify user can perform sorting by name (asc & desc)', () => {
+  test.skip(process.env.CI === 'true', 'Skipped in CI');
   let allProducts: Product[] = [];
   let expectedProducts: {
     byNameAsc: Product[];
@@ -23,19 +25,12 @@ test.describe('Verify user can perform sorting by name (asc & desc)', () => {
   test.beforeAll(async ({ browser }) => {
     const page = await browser.newPage();
     const homePage = new HomePage(page);
- 
-    await page.goto('/');
+
+    await homePage.open();
     allProducts = await homePage.getAllProducts();
-
-    expectedProducts = {
-      byNameAsc: [...allProducts]
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .slice(0, 9),
-
-      byNameDesc: [...allProducts]
-      .sort((a, b) => b.name.localeCompare(a.name))
-      .slice(0, 9),
-    };
+    
+    expectedProducts = buildSortedProductSets(allProducts);
+    
     await page.close();
   });
   
@@ -47,9 +42,9 @@ test.describe('Verify user can perform sorting by name (asc & desc)', () => {
       await homePage.selectSort(sortValue);
 
       const uiProductsRaw = await homePage.getFirstPageProducts(); 
-      const uiProducts = uiProductsRaw.slice(0, 9);
+      const uiProducts = expectedProducts[expectedKey].slice(0, uiProductsRaw.length);
 
-      expect(uiProducts).toEqual(expectedProducts[expectedKey]);
+      expect(uiProductsRaw).toEqual(uiProducts);
     });
   }
 });

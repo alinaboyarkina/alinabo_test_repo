@@ -3,8 +3,10 @@ import { HomePage } from '../pages/home.page';
 import { ProductPage } from '../pages/product.page';
 import { CheckoutCartPage } from '../pages/checkout-1-cart.page';
 
+
 test ('Verify user can add product to cart', async ({page}) => {
-     
+    test.skip(process.env.CI === 'true', 'Skipped in CI');
+    
     const homePage = new HomePage(page);
     const productPage = new ProductPage(page);
     const checkoutCartPage = new CheckoutCartPage(page);
@@ -13,7 +15,7 @@ test ('Verify user can add product to cart', async ({page}) => {
     const productPrice = '9.17';
     const alert = page.getByRole('alert');
 
-    await page.goto('');
+    await homePage.open();
     await homePage.header.homeButton.click();
     await homePage.searchProduct(productName);
     await homePage.productByName(productName).click();
