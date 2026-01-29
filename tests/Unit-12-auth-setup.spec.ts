@@ -10,6 +10,7 @@ test ('Validate login successful', async ({page}) => {
     
     const loginPage = new LoginPage (page);
 
+    await loginPage.open();
     await loginPage.performLogin(TEST_USER.email, TEST_USER.password);
     await expect(page).toHaveURL('/account');
     await page.close();

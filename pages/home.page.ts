@@ -32,7 +32,7 @@ export class HomePage {
     }
   
   get firstProductCard() {
-    return this.page.locator("[data-test^='product-']").first();
+    return this.page.getByTestId(/^product-/).first();
   }
 
   async getFirstProduct(): Promise<Product> {

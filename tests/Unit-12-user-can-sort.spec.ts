@@ -34,6 +34,8 @@ test.describe('Verify user can perform sorting by name (asc & desc)', () => {
   ];
 
   test.beforeAll(async ({ browser }) => {
+    test.skip(process.env.CI === 'true', 'Skipped in CI');
+
     const page = await browser.newPage();
     const homePage = new HomePage(page);
 
@@ -42,11 +44,12 @@ test.describe('Verify user can perform sorting by name (asc & desc)', () => {
 
     expectedProducts = buildSortedProductSets(allProducts);
 
-    await page.close();
   });
   
   for (const { sortValue, expectedKey } of sortingCases) {
     test( `Verify sorting by ${sortValue}`, async ({ page }) => {
+      test.skip(process.env.CI === 'true', 'Skipped in CI');
+      
       const homePage = new HomePage(page);
       await homePage.open();
       

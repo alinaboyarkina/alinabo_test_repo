@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from '../fixtures';
+import { TEST_ALERTS } from '../testData/testAlertsMessages';
 
 test ('Verify user can add product to cart with allPages and fixture', async ({app, page}) => {
     test.skip(process.env.CI === 'true', 'Skipped in CI');
@@ -18,7 +19,7 @@ test ('Verify user can add product to cart with allPages and fixture', async ({a
     await expect(app.productPage.unitPriceField).toContainText(productPrice);
     await app.productPage.addToCartButton.click();
     await expect(alert).toBeVisible();
-    await expect(alert).toHaveText('Product added to shopping cart.');
+    await expect(alert).toHaveText(TEST_ALERTS.productAddedToCart);
     await expect(alert).toBeHidden({ timeout: 8000 });
     await expect(app.productPage.header.productInCartQuantityIcon).toHaveText('1');
     await app.productPage.header.cartButton.click();

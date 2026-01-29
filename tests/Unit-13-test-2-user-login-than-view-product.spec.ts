@@ -8,6 +8,7 @@ test ('Verify user can view product details with allPages and fixture', async ({
     const productName = 'Combination Pliers';
     const productPrice = '14.15';
 
+    await app.loginPage.open();
     await app.loginPage.performLogin(TEST_USER.email, TEST_USER.password);
 
     await app.homePage.header.homeButton.click();

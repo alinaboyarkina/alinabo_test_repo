@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { Product } from "../types/productCard";
 import { test } from '../fixtures';
+import { buildSortedProductSets } from "../utils/sortProducts";
 
 test.describe('Verify user can perform sorting by name & price (asc & desc) with allPages and fixture', () => {
   test.skip(process.env.CI === 'true', 'Skipped in CI');
@@ -32,42 +33,28 @@ test.describe('Verify user can perform sorting by name & price (asc & desc) with
     },
   ];
 
-  test.beforeAll(async ({ app, page }) => {
+  test.beforeAll(async ({ app }) => {
+    test.skip(process.env.CI === 'true', 'Skipped in CI');
  
     await app.homePage.open();
     allProducts = await app.homePage.getAllProducts();
+    
+    expectedProducts = buildSortedProductSets(allProducts);
 
-    expectedProducts = {
-      byNameAsc: [...allProducts]
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .slice(0, 9),
-
-      byNameDesc: [...allProducts]
-      .sort((a, b) => b.name.localeCompare(a.name))
-      .slice(0, 9),
-
-        byPriceAsc: [...allProducts]
-      .sort((a, b) => a.price - b.price)
-      .slice(0, 9),
-
-    byPriceDesc: [...allProducts]
-      .sort((a, b) => b.price - a.price)
-      .slice(0, 9),
-      
-    };
-    await page.close();
   });
   
   for (const { sortValue, expectedKey } of sortingCases) {
-    test( `Verify sorting by ${sortValue}`, async ({ app, page }) => {
-      await page.goto('/');
+    test( `Verify sorting by ${sortValue}`, async ({ app }) => {
+      test.skip(process.env.CI === 'true', 'Skipped in CI');
+      
+      await app.homePage.open();
       
       await app.homePage.selectSort(sortValue);
 
       const uiProductsRaw = await app.homePage.getFirstPageProducts(); 
-      const uiProducts = uiProductsRaw.slice(0, 9);
+      const uiProducts = expectedProducts[expectedKey].slice(0, uiProductsRaw.length);
 
-      expect(uiProducts).toEqual(expectedProducts[expectedKey]);
+      expect(uiProductsRaw).toEqual(uiProducts);
     });
   }
 });

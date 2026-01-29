@@ -14,6 +14,7 @@ test ('VVerify user can view product details', async ({page}) => {
     const productName = 'Combination Pliers';
     const productPrice = '14.15';
 
+    await loginPage.open();
     await loginPage.performLogin(TEST_USER.email, TEST_USER.password);
 
     await homePage.header.homeButton.click();
