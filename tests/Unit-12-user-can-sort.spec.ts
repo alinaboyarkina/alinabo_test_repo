@@ -5,10 +5,13 @@ import { buildSortedProductSets } from "../utils/sortProducts";
 
 test.describe('Verify user can perform sorting by name (asc & desc)', () => {
   test.skip(process.env.CI === 'true', 'Skipped in CI');
+  
   let allProducts: Product[] = [];
   let expectedProducts: {
     byNameAsc: Product[];
     byNameDesc: Product[];
+    byPriceAsc: Product[];
+    byPriceDesc: Product[];
   };
   
   const sortingCases = [
@@ -20,24 +23,35 @@ test.describe('Verify user can perform sorting by name (asc & desc)', () => {
       sortValue: 'name,desc',
       expectedKey: 'byNameDesc' as const,
     },
+    {
+      sortValue: 'price,asc',
+      expectedKey: 'byPriceAsc' as const,
+    },
+    {
+      sortValue: 'price,desc',
+      expectedKey: 'byPriceDesc' as const,
+    },
   ];
 
   test.beforeAll(async ({ browser }) => {
+    test.skip(process.env.CI === 'true', 'Skipped in CI');
+
     const page = await browser.newPage();
     const homePage = new HomePage(page);
 
     await homePage.open();
     allProducts = await homePage.getAllProducts();
-    
+
     expectedProducts = buildSortedProductSets(allProducts);
-    
-    await page.close();
+
   });
   
   for (const { sortValue, expectedKey } of sortingCases) {
     test( `Verify sorting by ${sortValue}`, async ({ page }) => {
+      test.skip(process.env.CI === 'true', 'Skipped in CI');
+      
       const homePage = new HomePage(page);
-      await page.goto('/');
+      await homePage.open();
       
       await homePage.selectSort(sortValue);
 

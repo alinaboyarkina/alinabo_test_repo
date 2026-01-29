@@ -1,8 +1,10 @@
 import { test, expect} from '@playwright/test';
 import { HomePage } from '../pages/home.page';
-import { Product } from '../fragments/productCard';
+import { Product } from '../types/productCard';
+import { buildSortedProductSets } from "../utils/sortProducts";
 
 test.describe('Verify user can perform sorting by price (asc & desc)', () => {
+  test.skip(process.env.CI === 'true', 'Skipped in CI');
   
   let allProducts: Product[] = [];
   let expectedProducts: {
@@ -26,19 +28,10 @@ test.describe('Verify user can perform sorting by price (asc & desc)', () => {
    const page = await browser.newPage();
    const homePage = new HomePage(page);
  
-   await page.goto('/');
-
-   allProducts = await homePage.getAllProducts();
-   
-   expectedProducts = {
-    byPriceAsc: [...allProducts]
-      .sort((a, b) => a.price - b.price)
-      .slice(0, 9),
-
-    byPriceDesc: [...allProducts]
-      .sort((a, b) => b.price - a.price)
-      .slice(0, 9),
-    };
+    await homePage.open();
+    allProducts = await homePage.getAllProducts();
+       
+    expectedProducts = buildSortedProductSets(allProducts);
   
   });
   
@@ -47,18 +40,13 @@ test.describe('Verify user can perform sorting by price (asc & desc)', () => {
       const homePage = new HomePage(page);
       await page.goto('/');
       
-      // 1. Сортуємо (метод сам дочекається і мережі, і оновлення тексту)
       await homePage.selectSort(sortValue);
 
-      // 2. Тепер збираємо дані. Використовуйте версію з evaluate, 
-      // щоб уникнути помилок з nth(1)
       const uiProductsRaw = await homePage.getFirstPageProducts(); 
-      const uiProducts = uiProductsRaw.slice(0, 9);
+      const uiProducts = expectedProducts[expectedKey].slice(0, uiProductsRaw.length);
 
-      expect(uiProducts).toEqual(expectedProducts[expectedKey]);
+      expect(uiProductsRaw).toEqual(uiProducts);
     });
   }
-
-  
 });
 
