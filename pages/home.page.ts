@@ -165,7 +165,7 @@ export class HomePage {
         id: `mock-id-${i + 1}`, 
         name: `Mock product ${i + 1}`, 
         description: `Mock description for product ${i + 1}`, 
-        price: 10 + i, 
+        price: 1000 + i, 
         is_location_offer: false, 
         is_rental: false, 
         co2_rating: "A", 
@@ -177,7 +177,7 @@ export class HomePage {
           by_url: "https://example.com", 
           source_name: "MockSource", 
           source_url: "https://example.com", 
-          file_name: "mock-image.avif", // 🔥 критично важливо 
+          file_name: "mock-image.avif", 
           title: `Mock product ${i + 1}` 
         }, 
         category: { 
