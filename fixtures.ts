@@ -41,8 +41,6 @@ export const test = base.extend<MyAppFixtures>({
                 data: {
                     email: TEST_USER.email, 
                     password: TEST_USER.password,
-                    //email: "customer@practicesoftwaretesting.com",
-                    //password: "welcome01",
                 }
             }
         );
