@@ -1,4 +1,4 @@
-import { Locator, Page } from "@playwright/test";
+import { Locator, Page, expect } from "@playwright/test";
 import { HeaderFragment } from '../fragments/header';
 
 export class MyAccount {
@@ -21,5 +21,9 @@ export class MyAccount {
 
     async open() { 
         await this.page.goto('/account'); 
+    }
+
+    async expectLoaded() { 
+        await expect(this.page).toHaveURL('/account'); 
     }
 }

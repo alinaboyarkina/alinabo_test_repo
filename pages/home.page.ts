@@ -9,6 +9,7 @@ export class HomePage {
   searchField: Locator;
   searchSubmitButton: Locator;
   sortByCategoryCheckBox: Locator;
+  productCard: Locator;
   productNameField: Locator;
   productPriceField: Locator;
   nextPageButton:Locator;
@@ -21,6 +22,7 @@ export class HomePage {
     this.searchField = this.page.getByTestId('search-query');
     this.searchSubmitButton = this.page.getByTestId('search-submit');
     this.sortByCategoryCheckBox = this.page.locator('.checkbox');
+    this.productCard = this.page.locator('a.card');
     this.productNameField = this.page.getByTestId('product-name');
     this.productPriceField = this.page.getByTestId('product-price');
     this.nextPageButton = this.page.getByRole('button', { name: 'Next' });
@@ -30,6 +32,10 @@ export class HomePage {
   async open() { 
         await this.page.goto('/'); 
     }
+
+  async expectLoaded() { 
+        await expect(this.page).toHaveURL('/');
+  }
   
   get firstProductCard() {
     return this.page.getByTestId(/^product-/).first();
@@ -152,4 +158,50 @@ export class HomePage {
       timeout: 7000,
     }).not.toBe(oldFirstName);
  }
+
+ async countProductsMock(productAmount: number): Promise<void> {
+    await this.page.route(/\/products(\?.*)?$/, async (route) => {
+      const products = Array.from({ length: productAmount }, (_, i) => ({
+        id: `mock-id-${i + 1}`, 
+        name: `Mock product ${i + 1}`, 
+        description: `Mock description for product ${i + 1}`, 
+        price: 10 + i, 
+        is_location_offer: false, 
+        is_rental: false, 
+        co2_rating: "A", 
+        in_stock: true, 
+        is_eco_friendly: false, 
+        product_image: { 
+          id: `mock-image-${i + 1}`, 
+          by_name: "Mock Author", 
+          by_url: "https://example.com", 
+          source_name: "MockSource", 
+          source_url: "https://example.com", 
+          file_name: "mock-image.avif", // 🔥 критично важливо 
+          title: `Mock product ${i + 1}` 
+        }, 
+        category: { 
+          id: `mock-category-${i + 1}`, 
+          name: "Mock Category", 
+          slug: "mock-category" 
+        }, 
+          brand: { 
+            id: `mock-brand-${i + 1}`, 
+            name: "Mock Brand" 
+          }
+      }));
+
+      await route.fulfill({
+        json: {
+          current_page: 1,
+          data: products,
+          from: 1,
+          last_page: 1,
+          per_page: productAmount,
+          to: productAmount,
+          total: productAmount,
+        },
+      });
+    });
+  }
 }
