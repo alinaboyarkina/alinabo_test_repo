@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test'
 import { test } from '../fixtures';
 
-test('Verify 20 products are displayed per page', async ({ apiLoggedInApp }) => {
+test('`Verify 20 products are displayed per page', async ({ apiLoggedInApp }) => {
 
     const expectedCount = 20;
     
@@ -9,6 +9,8 @@ test('Verify 20 products are displayed per page', async ({ apiLoggedInApp }) => 
     await apiLoggedInApp.homePage.open();
 
     const products = apiLoggedInApp.homePage.productCard;
+
+    await expect(apiLoggedInApp.homePage.productCard.first()).toContainText('Mock product');
 
     await expect(
         products,
