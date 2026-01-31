@@ -11,16 +11,12 @@ test('`Verify 20 products are displayed per page', async ({ apiLoggedInApp }) =>
 
     const expectProducts = apiLoggedInApp.homePage.productCard;
 
-    //await expect(expectProducts).toHaveCount(expectedCount)
     await expect.poll(async () => { 
         return await expectProducts.count(); 
     }, { 
         timeout: 7000, 
     }).toBe(expectedCount);
 
-    // for (let i = 0; i < expectedCount; i++) { 
-    //     await expect(apiLoggedInApp.homePage.productCard.nth(i)).toBeVisible(); 
-    // }
 });
 
 
