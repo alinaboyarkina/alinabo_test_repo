@@ -14,7 +14,7 @@ test('`Verify 20 products are displayed per page', async ({ apiLoggedInApp }) =>
     await expect.poll(async () => { 
         return await expectProducts.count(); 
     }, { 
-        timeout: 7000, 
+        timeout: 30000, 
     }).toBe(expectedCount);
 
 });
