@@ -36,7 +36,7 @@ export const test = base.extend<MyAppFixtures>({
     apiLoggedInApp: async ({ page, request }, use) => {
         
         const resp = await request.post(
-            API_BASE_URL.login, 
+            `${API_BASE_URL}/users/login`, 
             {
                 data: {
                     email: TEST_USER.email, 

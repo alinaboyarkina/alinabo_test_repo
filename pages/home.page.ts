@@ -29,14 +29,46 @@ export class HomePage {
     this.nextPageItem = this.page.locator('li.page-item', { has: this.nextPageButton });
   }
   
-  async open() { 
+  async open(): Promise<void> { 
         await this.page.goto('/'); 
     }
 
-  async expectLoaded() { 
+  async expectLoaded(): Promise<void>  { 
         await expect(this.page).toHaveURL('/');
   }
+
+  async searchProduct(productName: string): Promise<void>  {
+    await this.searchField.fill(productName);
+    await this.searchSubmitButton.click();
+  }
   
+  productByName (name: string) {
+    return this.page.getByTestId('search_completed').getByTestId(/^product-/).filter({ hasText: name }).first()};
+
+  categoryByName(name: string):Locator {
+    return this.page
+    .locator('label', { hasText: name })
+    .locator('input[type="checkbox"]');
+  }
+
+  async selectSort(value: string) {
+    const oldFirstName = (await this.productNameField.first().textContent())?.trim() ?? '';
+
+    await Promise.all([
+      this.page.waitForResponse(resp =>
+        resp.url().includes('/products') && resp.status() === 200,
+        { timeout: 10000 }
+      ),
+      this.sortDropdown.selectOption(value)
+    ]);
+
+    await expect.poll(async () => {
+      return (await this.productNameField.first().textContent())?.trim();
+    }, {
+      timeout: 7000,
+    }).not.toBe(oldFirstName);
+ }
+
   get firstProductCard() {
     return this.page.getByTestId(/^product-/).first();
   }
@@ -53,18 +85,27 @@ export class HomePage {
     };
   }
 
-  async searchProduct(productName: string) {
-    await this.searchField.fill(productName);
-    await this.searchSubmitButton.click();
-  }
-  
-  productByName (name: string) {
-    return this.page.getByTestId('search_completed').getByTestId(/^product-/).filter({ hasText: name }).first()};
+  async getFirstPageProducts(): Promise<Product[]> {
+    const allProductCards = this.page.locator("[data-test^='product-']");
+    await allProductCards.first().waitFor({ state: 'visible' });
 
-  categoryByName(name: string):Locator {
-    return this.page
-    .locator('label', { hasText: name })
-    .locator('input[type="checkbox"]');
+    const cards = await allProductCards.all();
+    const productData: Product[] = [];
+
+    for (const card of cards) {
+      const nameField = card.getByTestId("product-name");
+
+      if (await nameField.count() > 0) {
+        const name = (await nameField.textContent())?.trim() ?? '';
+        const priceRaw = (await card.getByTestId("product-price").textContent())?.trim() ?? '';
+        
+        productData.push({
+          name,
+          price: priceRaw ? Number(priceRaw.replace(/[^0-9.]/g, '')) : null
+        });
+      }
+    }
+    return productData;
   }
 
   async getAllProducts(): Promise<Product[]> {
@@ -117,45 +158,4 @@ export class HomePage {
     } while (!isLastPage); 
     return products;
   }
-
-  async getFirstPageProducts(): Promise<Product[]> {
-    const allProductCards = this.page.locator("[data-test^='product-']");
-    await allProductCards.first().waitFor({ state: 'visible' });
-
-    const cards = await allProductCards.all();
-    const productData: Product[] = [];
-
-    for (const card of cards) {
-      const nameField = card.getByTestId("product-name");
-
-      if (await nameField.count() > 0) {
-        const name = (await nameField.textContent())?.trim() ?? '';
-        const priceRaw = (await card.getByTestId("product-price").textContent())?.trim() ?? '';
-        
-        productData.push({
-          name,
-          price: priceRaw ? Number(priceRaw.replace(/[^0-9.]/g, '')) : null
-        });
-      }
-    }
-    return productData;
-  }
-  
-  async selectSort(value: string) {
-    const oldFirstName = (await this.productNameField.first().textContent())?.trim() ?? '';
-
-    await Promise.all([
-      this.page.waitForResponse(resp =>
-        resp.url().includes('/products') && resp.status() === 200,
-        { timeout: 10000 }
-      ),
-      this.sortDropdown.selectOption(value)
-    ]);
-
-    await expect.poll(async () => {
-      return (await this.productNameField.first().textContent())?.trim();
-    }, {
-      timeout: 7000,
-    }).not.toBe(oldFirstName);
- }
 }
