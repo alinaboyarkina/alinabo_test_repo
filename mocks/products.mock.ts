@@ -15,7 +15,7 @@ export function generateMockProducts(amount: number) {
       by_url: "https://example.com",
       source_name: "MockSource",
       source_url: "https://example.com",
-      file_name: "mock-image.avif",
+      file_name: "pliers01.avif",
       title: `Mock product ${i + 1}`,
     },
     category: {
