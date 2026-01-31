@@ -9,6 +9,9 @@ test('`Verify 20 products are displayed per page', async ({ apiLoggedInApp }) =>
     await mockProductsRoute(apiLoggedInApp.page, expectedCount);
     await apiLoggedInApp.homePage.open();
 
+    apiLoggedInApp.page.on('request', req => { 
+        console.log('📡 CI Request:', req.url()); });
+
     //const products = apiLoggedInApp.homePage.productCard;
 
     //await expect(apiLoggedInApp.homePage.productCard.first()).toContainText('Mock product');
