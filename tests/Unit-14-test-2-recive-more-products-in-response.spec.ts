@@ -1,11 +1,12 @@
 import { expect } from '@playwright/test'
 import { test } from '../fixtures';
+import { mockProductsRoute } from '../mocks/products.route';
 
 test('`Verify 20 products are displayed per page', async ({ apiLoggedInApp }) => {
 
     const expectedCount = 20;
     
-    await apiLoggedInApp.homePage.countProductsMock(expectedCount);
+    await mockProductsRoute(apiLoggedInApp.page, expectedCount);
     await apiLoggedInApp.homePage.open();
 
     const products = apiLoggedInApp.homePage.productCard;
