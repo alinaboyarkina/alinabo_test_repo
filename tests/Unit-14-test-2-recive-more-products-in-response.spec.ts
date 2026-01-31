@@ -8,6 +8,7 @@ test('`Verify 20 products are displayed per page', async ({ apiLoggedInApp }) =>
     
     await mockProductsRoute(apiLoggedInApp.page, expectedCount);
     await apiLoggedInApp.page.reload();
+    await apiLoggedInApp.page.waitForResponse('**/products**');
     
     const expectProducts = apiLoggedInApp.homePage.productCard;
 
