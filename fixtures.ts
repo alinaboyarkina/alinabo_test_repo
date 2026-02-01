@@ -56,7 +56,7 @@ export const test = base.extend<MyAppFixtures>({
             localStorage.setItem('auth-token', token);
         }, token)
             
-        await page.reload();
+        //await page.reload();
         
         const app = new App(page);  
         await use(app); 
