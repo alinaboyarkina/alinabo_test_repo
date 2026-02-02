@@ -1,7 +1,8 @@
 import { test as base} from '@playwright/test';
 import { App} from './pages/app';
-import { TEST_USER } from './testData/testUser';
-import { API_BASE_URL } from './testData/apiBaseUrl';
+//import { TEST_USER } from './testData/testUser';
+//import { API_BASE_URL } from './testData/apiBaseUrl';
+import { API_BASE_URL, USER_EMAIL, USER_PASSWORD } from './config/baseConfig';
 
 // Declare the types of your fixtures.
 type MyAppFixtures = {
@@ -39,8 +40,8 @@ export const test = base.extend<MyAppFixtures>({
             `${API_BASE_URL}/users/login`, 
             {
                 data: {
-                    email: TEST_USER.email, 
-                    password: TEST_USER.password,
+                    email: USER_EMAIL, 
+                    password: USER_PASSWORD,
                 }
             }
         );
