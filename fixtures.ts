@@ -49,18 +49,10 @@ export const test = base.extend<MyAppFixtures>({
 
         const jsonData = await resp.json();
         token = jsonData.access_token;
-        
-        //await page.goto('/')
-        
-        // await page.evaluate((token) => {
-        //     localStorage.setItem('auth-token', token);
-        // }, token)
-
+    
         await page.addInitScript ((token) => {
             window.localStorage.setItem ('auth-token', token);
         }, token)
-            
-        //await page.reload();
         
         const app = new App(page);  
         await use(app); 
