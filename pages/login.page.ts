@@ -1,4 +1,4 @@
-import { Locator, Page } from "@playwright/test";
+import { Locator, Page, expect } from "@playwright/test";
 import { HeaderFragment } from '../fragments/header';
 export class LoginPage {
 
@@ -18,7 +18,11 @@ export class LoginPage {
     async open() { 
         await this.page.goto('/auth/login'); 
     }
-    
+
+    async expectLoaded() { 
+        await expect(this.page).toHaveURL('/auth/login');
+    }
+
     async performLogin (email: string, password: string) {
         await this.emailField.fill(email);
         await this.passwordField.fill(password);

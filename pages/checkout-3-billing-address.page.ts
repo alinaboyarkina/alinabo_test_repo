@@ -11,8 +11,6 @@ export class CheckoutBillingAddressPage {
     stateInBillingAddressFormField: Locator;
     countryInBillingAddressFormField: Locator;
     postcodeInBillingAddressFormField: Locator;
-
-   
     proceedCheckoutButton: Locator;
 
     constructor (page: Page) {

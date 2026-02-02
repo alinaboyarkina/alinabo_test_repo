@@ -9,6 +9,7 @@ import { HomePage } from "./home.page";
 import { ProductPage } from "./product.page";
 
 export class App {
+    page: Page;
     loginPage: LoginPage;
     myAccountPage: MyAccount;
     checkoutCartPage: CheckoutCartPage;
@@ -19,6 +20,7 @@ export class App {
     productPage: ProductPage;
     
     constructor (page: Page) {
+        this.page = page;
         this.loginPage = new LoginPage (page);
         this.myAccountPage = new MyAccount (page);
         this.checkoutCartPage = new CheckoutCartPage (page);
