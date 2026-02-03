@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { HomePage } from '../pages/home.page';
-import { TEST_USER } from '../testData/testUser';
+import { UserData } from '../testData/testData';
 
 test ('Validate login successful', async ({page}) => {
     test.skip(process.env.CI === 'true', 'Skipped in CI');
@@ -8,6 +8,6 @@ test ('Validate login successful', async ({page}) => {
     const homePage = new HomePage (page);
 
     await homePage.open();
-    await expect(homePage.header.navMenuButton).toHaveText(TEST_USER.fullName);
+    await expect(homePage.header.navMenuButton).toHaveText(UserData.userFulllName);
 
 });
