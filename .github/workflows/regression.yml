@@ -1,4 +1,4 @@
-name: Smoke Tests
+name: Regression Tests
 
 on:
   push:
