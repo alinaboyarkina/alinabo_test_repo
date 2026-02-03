@@ -4,8 +4,13 @@ import { UserData } from '../testData/testData';
 
 test ('Validate login successful with API', { tag: '@regression' }, async ({apiLoggedInApp}) => {
     
-    await apiLoggedInApp.homePage.open()
-    await expect(apiLoggedInApp.homePage.header.navMenuButton).toHaveText(UserData.userFulllName);
+    await test.step('Open home page as an already authenticated user', async () => { 
+        await apiLoggedInApp.homePage.open(); 
+    });
+    
+    await test.step('Verify user full name is displayed in header', async () => { 
+        await expect(apiLoggedInApp.homePage.header.navMenuButton) .toHaveText(UserData.userFulllName); 
+    });
 
 });
 

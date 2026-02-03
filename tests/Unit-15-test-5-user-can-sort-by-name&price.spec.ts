@@ -35,28 +35,43 @@ test.describe('Verify user can perform sorting by name & price (asc & desc) with
 
   test.beforeAll( 'Get all Products @smoke', async ({ app }) => {
     test.skip(process.env.CI === 'true', 'Skipped in CI');
- 
-    await app.homePage.open();
-    allProducts = await app.homePage.getAllProducts();
     
-    expectedProducts = buildSortedProductSets(allProducts);
-
-  });
-  
-  for (const { sortValue, expectedKey } of sortingCases) {
-    test( `Verify sorting by ${sortValue}`, { tag: '@smoke' }, async ({ app }) => {
-      test.skip(process.env.CI === 'true', 'Skipped in CI');
-      
+    await test.step('Open home page', async () => {
       await app.homePage.open();
-      
-      await app.homePage.selectSort(sortValue);
-
-      const uiProductsRaw = await app.homePage.getFirstPageProducts(); 
-      const uiProducts = expectedProducts[expectedKey].slice(0, uiProductsRaw.length);
-
-      expect(uiProductsRaw).toEqual(uiProducts);
     });
-  }
+
+    await test.step('Collect all products from UI', async () => {
+      allProducts = await app.homePage.getAllProducts();
+    });
+
+    await test.step('Build expected sorted product sets', async () => {
+      expectedProducts = buildSortedProductSets(allProducts);
+    });
+  });
+    
+    for (const { sortValue, expectedKey } of sortingCases) {
+      test( `Verify sorting by ${sortValue}`, { tag: '@smoke' }, async ({ app }) => {
+        test.skip(process.env.CI === 'true', 'Skipped in CI');
+        
+        await test.step('Open home page', async () => {
+          await app.homePage.open();
+        });
+
+        await test.step(`Apply sorting: ${sortValue}`, async () => {
+          await app.homePage.selectSort(sortValue);
+        });
+        
+        const uiProductsRaw = await test.step('Collect products from UI after sorting', async () => { 
+          return await app.homePage.getFirstPageProducts(); 
+        }); 
+          
+        const uiProducts = expectedProducts[expectedKey].slice(0, uiProductsRaw.length);
+
+        await test.step('Compare UI products with expected sorted products', async () => { 
+          expect(uiProductsRaw).toEqual(uiProducts); 
+        });
+      });
+    }
 });
 
 
