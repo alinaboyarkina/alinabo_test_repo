@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import { test } from '../fixtures';
-import { UserData } from '../testData/testData';
+import { userData } from '../testData/testData';
 
 test ('Verify user can view product details with allPages and fixture', async ({app}) => {
     test.skip(process.env.CI === 'true', 'Skipped in CI');
@@ -9,7 +9,7 @@ test ('Verify user can view product details with allPages and fixture', async ({
     const productPrice = '14.15';
 
     await app.loginPage.open();
-    await app.loginPage.performLogin(UserData.email, UserData.password);
+    await app.loginPage.performLogin(userData.email, userData.password);
 
     await app.homePage.header.homeButton.click();
     await app.homePage.searchProduct(productName);

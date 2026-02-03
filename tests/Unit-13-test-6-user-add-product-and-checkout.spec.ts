@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import { test } from '../fixtures';
-import { UserData } from '../testData/testData';
+import { userData } from '../testData/testData';
 import { VALID_CREDIT_CARD } from "../testData/testCreditCards";
 
 // @regression
@@ -24,7 +24,7 @@ test ('Verify user can add product and can checkout with allPages and fixture', 
     await apiLoggedInApp.checkoutCartPage.proceedCheckoutButton.click();
 
     //Перевірити, що юзер вже залогінений і нічого додатково робити не потрібно
-    await expect(apiLoggedInApp.checkoutSignInPage.header.navMenuButton).toHaveText(UserData.userFulllName);
+    await expect(apiLoggedInApp.checkoutSignInPage.header.navMenuButton).toHaveText(userData.userFulllName);
     await apiLoggedInApp.checkoutSignInPage.proceedCheckoutButton.click();
 
     //Ввести відсутні поля на сторінці Billing Address

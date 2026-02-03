@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import { test } from '../fixtures';
-import { UserData } from '../testData/testData';
+import { userData } from '../testData/testData';
 
 test ('Validate login successful with API', { tag: '@regression' }, async ({apiLoggedInApp}) => {
     
@@ -9,7 +9,7 @@ test ('Validate login successful with API', { tag: '@regression' }, async ({apiL
     });
     
     await test.step('Verify user full name is displayed in header', async () => { 
-        await expect(apiLoggedInApp.homePage.header.navMenuButton) .toHaveText(UserData.userFulllName); 
+        await expect(apiLoggedInApp.homePage.header.navMenuButton) .toHaveText(userData.userFulllName); 
     });
 
 });

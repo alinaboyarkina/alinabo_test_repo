@@ -23,7 +23,7 @@ test.describe('Verify user can perform sorting by price (asc & desc)', () => {
     },
   ];
   
-  test.beforeAll(async ({ browser }) => {
+  test.beforeEach(async ({ browser }) => {
     
    const page = await browser.newPage();
    const homePage = new HomePage(page);

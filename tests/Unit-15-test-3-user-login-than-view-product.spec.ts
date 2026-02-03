@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import { test } from '../fixtures';
-import { UserData } from '../testData/testData';
+import { userData } from '../testData/testData';
 
 test ('Verify user can view product details with allPages and fixture', { tag: '@regression' }, async ({app}) => {
     test.skip(process.env.CI === 'true', 'Skipped in CI');
@@ -13,7 +13,7 @@ test ('Verify user can view product details with allPages and fixture', { tag: '
     });
     
     await test.step('Log in with valid user credentials', async () => { 
-        await app.loginPage.performLogin(UserData.email, UserData.password); 
+        await app.loginPage.performLogin(userData.email, userData.password); 
     });
 
     await test.step('Navigate to Home page', async () => { 

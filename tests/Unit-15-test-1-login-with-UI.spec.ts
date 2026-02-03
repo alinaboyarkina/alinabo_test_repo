@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import { test } from '../fixtures';
-import { UserData } from '../testData/testData';
+import { userData } from '../testData/testData';
 import { PAGE_TITLES } from '../testData/testPagesTitles';
 
 test ('Validate login successful with allPages and fixture', { tag: '@regression' }, async ({app, page}) => {
@@ -11,7 +11,7 @@ test ('Validate login successful with allPages and fixture', { tag: '@regression
     }); 
     
     await test.step('Perform login with valid credentials', async () => { 
-        await app.loginPage.performLogin(UserData.email, UserData.password); 
+        await app.loginPage.performLogin(userData.email, userData.password); 
     }); 
     
     await test.step('Verify user is redirected to account page', async () => { 
@@ -20,7 +20,7 @@ test ('Validate login successful with allPages and fixture', { tag: '@regression
     }); 
     
     await test.step('Verify user full name is displayed in header', async () => { 
-        await expect(app.myAccountPage.header.navMenuButton) .toHaveText(UserData.userFulllName); 
+        await expect(app.myAccountPage.header.navMenuButton) .toHaveText(userData.userFulllName); 
     });
 
 });

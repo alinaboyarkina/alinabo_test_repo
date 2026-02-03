@@ -33,7 +33,7 @@ test.describe('Verify user can perform sorting by name (asc & desc)', () => {
     },
   ];
 
-  test.beforeAll(async ({ browser }) => {
+  test.beforeEach(async ({ browser }) => {
     test.skip(process.env.CI === 'true', 'Skipped in CI');
 
     const page = await browser.newPage();

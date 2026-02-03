@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import { test } from '../fixtures';
-import { UserData } from '../testData/testData';
+import { userData } from '../testData/testData';
 import { VALID_CREDIT_CARD } from "../testData/testCreditCards";
 
 test ('Verify user can add product and can checkout with allPages and fixture', { tag: '@regression' }, async ({apiLoggedInApp}) => {
@@ -34,7 +34,7 @@ test ('Verify user can add product and can checkout with allPages and fixture', 
     });
     
     await test.step('Verify user is already logged in and continue checkout', async () => {
-        await expect(apiLoggedInApp.checkoutSignInPage.header.navMenuButton).toHaveText(UserData.userFulllName);
+        await expect(apiLoggedInApp.checkoutSignInPage.header.navMenuButton).toHaveText(userData.userFulllName);
         await apiLoggedInApp.checkoutSignInPage.proceedCheckoutButton.click();
     });
     
