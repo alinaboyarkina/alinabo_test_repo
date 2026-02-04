@@ -24,8 +24,8 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
+    - name: Run Smoke tests with Testomat reporting
+      run: TESTOMATIO=${{ secrets.TESTOMATIO }} npx playwright test --grep "@smoke"
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
@@ -34,8 +34,3 @@ jobs:
         retention-days: 30
     - name: Run Smoke Tests 
       run: npx playwright test --grep "@smoke"
-    - name: Run Playwright tests with Testomat reporting
-      run: |
-        npm ci
-        npx playwright install --with-deps
-        TESTOMATIO=${{ secrets.TESTOMATIO }} npx playwright test
