@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { BASE_URL } from './config/baseConfig'; 
 
 /**
  * Read environment variables from file.
@@ -18,19 +19,36 @@ export default defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
+  //retries: process.env.CI ? 2 : 0,
+  retries: 1,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  //reporter: 'html',
+  reporter: [ 
+    ['dot'], 
+    ['html', { open: 'never' }],
+    ['json', { outputFile: 'report.json' }], 
+    ['list'],
+      [
+        '@testomatio/reporter/playwright',
+        {
+          apiKey: process.env.TESTOMATIO,
+        },
+      ],
+    ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
     // baseURL: 'http://localhost:3000',
-    baseURL: 'https://practicesoftwaretesting.com',
+    baseURL: BASE_URL,
+
+    screenshot: 'only-on-failure',
+    video: 'on-first-retry',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    //trace: 'on-first-retry',
+    trace: 'retain-on-failure',
 
     testIdAttribute: 'data-test',
   },
@@ -46,6 +64,22 @@ export default defineConfig({
        //storageState: 'playwright/.auth/user.json',
         ...devices['Desktop Chrome'] },
         //dependencies: ['perform-login'],
+    },
+    
+    //smoke tests
+    { 
+      name: 'smoke', 
+      grep: /@smoke/, 
+      use: { ...devices['Desktop Chrome'], 
+      }, 
+    },
+
+      //regression tests
+    { 
+      name: 'regression', 
+      grep: /@regression/, 
+      use: { ...devices['Desktop Chrome'], 
+      }, 
     },
 
     //{

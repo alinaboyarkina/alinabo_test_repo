@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { LoginPage } from '../pages/login.page';
-import { TEST_USER } from '../testData/testUser';
+import { userData } from '../testData/testData';
 
 import path from 'path';
 const authFile = path.join(__dirname, '../playwright/.auth/user.json');
@@ -11,7 +11,7 @@ test ('Validate login successful', async ({page}) => {
     const loginPage = new LoginPage (page);
 
     await loginPage.open();
-    await loginPage.performLogin(TEST_USER.email, TEST_USER.password);
+    await loginPage.performLogin(userData.email, userData.password);
     await expect(page).toHaveURL('/account');
     await page.close();
     await page.context().storageState({ path: authFile });

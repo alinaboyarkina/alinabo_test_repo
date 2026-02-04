@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import { LoginPage } from '../pages/login.page';
 import { HomePage } from '../pages/home.page';
 import { ProductPage } from '../pages/product.page';
-import { TEST_USER } from '../testData/testUser';
+import { userData } from '../testData/testData';
 
 test ('VVerify user can view product details', async ({page}) => {
     test.skip(process.env.CI === 'true', 'Skipped in CI');
@@ -15,7 +15,7 @@ test ('VVerify user can view product details', async ({page}) => {
     const productPrice = '14.15';
 
     await loginPage.open();
-    await loginPage.performLogin(TEST_USER.email, TEST_USER.password);
+    await loginPage.performLogin(userData.email, userData.password);
 
     await homePage.header.homeButton.click();
     await homePage.searchProduct(productName);

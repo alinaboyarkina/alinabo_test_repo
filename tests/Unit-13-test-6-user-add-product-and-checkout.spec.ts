@@ -1,9 +1,9 @@
 import { expect } from '@playwright/test'
 import { test } from '../fixtures';
-import { TEST_USER } from '../testData/testUser';
+import { userData } from '../testData/testData';
 import { VALID_CREDIT_CARD } from "../testData/testCreditCards";
 
-
+// @regression
 test ('Verify user can add product and can checkout with allPages and fixture', async ({apiLoggedInApp}) => {
     test.skip(process.env.CI === 'true', 'Skipped in CI');
 
@@ -24,7 +24,7 @@ test ('Verify user can add product and can checkout with allPages and fixture', 
     await apiLoggedInApp.checkoutCartPage.proceedCheckoutButton.click();
 
     //Перевірити, що юзер вже залогінений і нічого додатково робити не потрібно
-    await expect(apiLoggedInApp.checkoutSignInPage.header.navMenuButton).toHaveText(TEST_USER.fullName);
+    await expect(apiLoggedInApp.checkoutSignInPage.header.navMenuButton).toHaveText(userData.userFulllName);
     await apiLoggedInApp.checkoutSignInPage.proceedCheckoutButton.click();
 
     //Ввести відсутні поля на сторінці Billing Address

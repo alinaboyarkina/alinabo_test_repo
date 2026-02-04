@@ -33,7 +33,7 @@ test.describe('Verify user can perform sorting by name & price (asc & desc) with
     },
   ];
 
-  test.beforeAll(async ({ app }) => {
+  test.beforeEach(async ({ app }) => {
     test.skip(process.env.CI === 'true', 'Skipped in CI');
  
     await app.homePage.open();
